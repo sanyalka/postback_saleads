@@ -1,0 +1,17 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Общая статистика постбеков</h1>
+<p><a class="button" href="/admin/postbacks/campaign/add/">Создать кампанию</a></p>
+<h2>Кампании</h2>
+<table>
+<tr><th>Кампания</th><th>Всего</th><th>Подтверждено</th><th>Вознаграждение</th></tr>
+{% for campaign in campaigns %}
+<tr><td><a href="{% url 'postbacks:campaign_detail' campaign.slug %}">{{ campaign.name }}</a></td><td>{{ campaign.total }}</td><td>{{ campaign.approved }}</td><td>{{ campaign.profit_total|default:"0" }}</td></tr>
+{% empty %}<tr><td colspan="4">Кампаний пока нет.</td></tr>{% endfor %}
+</table>
+<h2>Итого по статусам</h2>
+<table>
+<tr><th>Статус</th><th>Количество</th><th>Вознаграждение</th></tr>
+{% for row in totals %}<tr><td>{{ row.status }}</td><td>{{ row.count }}</td><td>{{ row.profit|default:"0" }}</td></tr>{% endfor %}
+</table>
+{% endblock %}

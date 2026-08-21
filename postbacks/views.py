@@ -6,7 +6,9 @@ from django.db import models
 from django.db.models import Count, Sum
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_GET
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_GET, require_POST
 from .forms import CampaignForm
 from .models import Campaign, PostbackEvent
 
@@ -128,9 +130,37 @@ def campaign_edit(request, slug):
 
 
 @staff_member_required
+@require_POST
+def campaign_delete(request, slug):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    campaign.delete()
+    return redirect('postbacks:campaign_list')
+
+
+@staff_member_required
+@require_POST
+def campaign_events_delete(request, slug):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    campaign.events.all().delete()
+    return redirect('postbacks:campaign_detail', slug=campaign.slug)
+
+
+@staff_member_required
 def event_list(request):
     events = PostbackEvent.objects.select_related('campaign').all()[:500]
     return render(request, 'admin/postbacks/event_list.html', {'events': events, 'summary': _summary(PostbackEvent.objects.all()), 'chart_rows': _chart_rows(PostbackEvent.objects.all())})
+
+
+@staff_member_required
+@require_POST
+def event_delete(request, event_id):
+    event = get_object_or_404(PostbackEvent, pk=event_id)
+    fallback_url = reverse('postbacks:campaign_detail', kwargs={'slug': event.campaign.slug})
+    next_url = request.POST.get('next', '')
+    if not url_has_allowed_host_and_scheme(next_url, {request.get_host()}, request.is_secure()):
+        next_url = fallback_url
+    event.delete()
+    return redirect(next_url)
 
 
 @staff_member_required

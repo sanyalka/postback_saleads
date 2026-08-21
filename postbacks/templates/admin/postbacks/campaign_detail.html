@@ -3,7 +3,7 @@
 {% block content %}
 <div class="hero">
   <div><div class="muted">Кампания</div><h1>{{ campaign.name }}</h1><p class="muted">Ссылки для подключения Saleads и последние события только этой кампании.</p></div>
-  <div class="toolbar"><a class="button" href="{% url 'postbacks:campaign_edit' campaign.slug %}">Редактировать</a><a class="button" href="{% url 'postbacks:export' campaign.slug 'json' %}">JSON</a><a class="button" href="{% url 'postbacks:export' campaign.slug 'csv' %}">CSV</a></div>
+  <div class="toolbar"><a class="button" href="{% url 'postbacks:campaign_edit' campaign.slug %}">Редактировать</a><a class="button" href="{% url 'postbacks:export' campaign.slug 'json' %}">JSON</a><a class="button" href="{% url 'postbacks:export' campaign.slug 'csv' %}">CSV</a><form class="inline-form" method="post" action="{% url 'postbacks:campaign_delete' campaign.slug %}" data-confirm="Удалить кампанию и все её события? Это действие нельзя отменить.">{% csrf_token %}<button class="button button-danger" type="submit">Удалить кампанию</button></form></div>
 </div>
 <div class="grid">
   <section class="card"><div class="muted">Всего</div><div class="metric">{{ summary.total|default:"0" }}</div></section>
@@ -25,10 +25,10 @@
   <p class="muted">Токены: <code>{clickId}</code>, <code>{conversionId}</code>, <code>{offerId}</code>, <code>{goalId}</code>, <code>{profit}</code>, <code>{sum}</code>, <code>{custom}</code>.</p>
 </section>
 <section class="card" style="margin-top:1rem">
-  <h2>Последние события</h2>
+  <div class="hero"><h2>Последние события</h2>{% if events %}<form class="inline-form" method="post" action="{% url 'postbacks:campaign_events_delete' campaign.slug %}" data-confirm="Удалить все события этой кампании? Это действие нельзя отменить.">{% csrf_token %}<button class="button button-danger" type="submit">Очистить события</button></form>{% endif %}</div>
   <div class="table-scroll"><table>
-    <tr><th>Дата</th><th>Статус</th><th>clickId</th><th>conversionId</th><th>offerId</th><th>goalId</th><th>profit</th><th>sum</th><th>custom</th></tr>
-    {% for event in events %}<tr><td>{{ event.created_at }}</td><td>{{ event.get_status_display }}</td><td>{{ event.click_id }}</td><td>{{ event.conversion_id }}</td><td>{{ event.offer_id }}</td><td>{{ event.goal_id }}</td><td>{{ event.profit }}</td><td>{{ event.order_sum }}</td><td>{{ event.custom }}</td></tr>{% empty %}<tr><td colspan="9">Событий пока нет.</td></tr>{% endfor %}
+    <tr><th>Дата</th><th>Статус</th><th>clickId</th><th>conversionId</th><th>offerId</th><th>goalId</th><th>profit</th><th>sum</th><th>custom</th><th></th></tr>
+    {% for event in events %}<tr><td>{{ event.created_at }}</td><td>{{ event.get_status_display }}</td><td>{{ event.click_id }}</td><td>{{ event.conversion_id }}</td><td>{{ event.offer_id }}</td><td>{{ event.goal_id }}</td><td>{{ event.profit }}</td><td>{{ event.order_sum }}</td><td>{{ event.custom }}</td><td><form class="inline-form" method="post" action="{% url 'postbacks:event_delete' event.id %}" data-confirm="Удалить это событие?">{% csrf_token %}<button class="button button-danger icon-button" type="submit" title="Удалить событие" aria-label="Удалить событие">×</button></form></td></tr>{% empty %}<tr><td colspan="10">Событий пока нет.</td></tr>{% endfor %}
   </table></div>
 </section>
 {% endblock %}

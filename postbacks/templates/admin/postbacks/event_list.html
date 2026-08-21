@@ -1,0 +1,22 @@
+{% extends "admin/postbacks/base.html" %}
+{% block title %}События — Saleads{% endblock %}
+{% block content %}
+<div class="hero"><div><div class="muted">Журнал</div><h1>Все события</h1><p class="muted">Последние 500 постбеков по всем кампаниям.</p></div></div>
+<div class="grid">
+  <section class="card"><div class="muted">Всего</div><div class="metric">{{ summary.total|default:"0" }}</div></section>
+  <section class="card"><div class="muted">В обработке</div><div class="metric">{{ summary.processing|default:"0" }}</div></section>
+  <section class="card"><div class="muted">Подтверждено</div><div class="metric">{{ summary.approved|default:"0" }}</div></section>
+  <section class="card"><div class="muted">Отклонено</div><div class="metric">{{ summary.rejected|default:"0" }}</div></section>
+</div>
+<section class="card">
+  <h2>График событий</h2>
+  <div class="chart">{% for row in chart_rows %}<div class="bar-wrap"><div class="bar {{ row.status }}" style="height: {{ row.height }}%"></div><strong>{{ row.count }}</strong><div class="label">{{ row.label }}</div></div>{% endfor %}</div>
+</section>
+<section class="card" style="margin-top:1rem">
+  <h2>Постбеки</h2>
+  <div class="table-scroll"><table>
+    <tr><th>Дата</th><th>Кампания</th><th>Статус</th><th>clickId</th><th>conversionId</th><th>offerId</th><th>goalId</th><th>profit</th><th>sum</th><th>custom</th><th></th></tr>
+    {% for event in events %}<tr><td>{{ event.created_at }}</td><td><a href="{% url 'postbacks:campaign_detail' event.campaign.slug %}">{{ event.campaign.name }}</a></td><td>{{ event.get_status_display }}</td><td>{{ event.click_id }}</td><td>{{ event.conversion_id }}</td><td>{{ event.offer_id }}</td><td>{{ event.goal_id }}</td><td>{{ event.profit }}</td><td>{{ event.order_sum }}</td><td>{{ event.custom }}</td><td><form class="inline-form" method="post" action="{% url 'postbacks:event_delete' event.id %}" data-confirm="Удалить это событие?">{% csrf_token %}<input type="hidden" name="next" value="{% url 'postbacks:event_list' %}"><button class="button button-danger icon-button" type="submit" title="Удалить событие" aria-label="Удалить событие">×</button></form></td></tr>{% empty %}<tr><td colspan="11">Событий пока нет.</td></tr>{% endfor %}
+  </table></div>
+</section>
+{% endblock %}

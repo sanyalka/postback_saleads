@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Saleads Postbacks{% endblock %}</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0f172a; --panel:#111c34; --panel2:#17233d; --text:#e5edf9; --muted:#94a3b8; --accent:#38bdf8; --green:#22c55e; --orange:#f59e0b; --red:#ef4444; --line:#263755; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at top left, #1e3a8a 0, transparent 34rem), var(--bg); color:var(--text); }
+    a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+    .shell { display:grid; grid-template-columns: 17rem 1fr; min-height:100vh; }
+    .sidebar { padding:2rem 1.25rem; background: rgba(15,23,42,.88); border-right:1px solid var(--line); backdrop-filter: blur(16px); }
+    .brand { font-size:1.25rem; font-weight:800; letter-spacing:.02em; margin-bottom:2rem; }
+    .nav a, .nav-logout { display:block; width:100%; padding:.8rem 1rem; border:0; border-radius:.9rem; color:var(--text); margin-bottom:.45rem; background:rgba(255,255,255,.03); font:inherit; text-align:left; cursor:pointer; transition: transform .18s ease, background .18s ease, box-shadow .18s ease; }
+    .nav a:hover, .nav-logout:hover { background:rgba(56,189,248,.14); box-shadow:0 10px 25px rgba(56,189,248,.12); transform:translateX(.25rem); text-decoration:none; }
+    .content { padding:2rem; }
+    .hero { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; margin-bottom:1.5rem; }
+    h1 { margin:.1rem 0 .35rem; font-size:2rem; } h2 { margin:0 0 1rem; }
+    .muted { color:var(--muted); }
+    .grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:1rem; margin:1.25rem 0; }
+    .card { background:linear-gradient(180deg, rgba(23,35,61,.96), rgba(17,28,52,.96)); border:1px solid var(--line); border-radius:1.1rem; padding:1.1rem; box-shadow: 0 20px 45px rgba(0,0,0,.18); }
+    .metric { font-size:2rem; font-weight:800; margin-top:.35rem; }
+    .toolbar { display:flex; gap:.7rem; flex-wrap:wrap; }
+    .button { border:1px solid rgba(56,189,248,.5); color:#e0f2fe; background:rgba(14,165,233,.18); padding:.7rem 1rem; border-radius:.8rem; display:inline-block; cursor:pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease; }
+    .button:hover { background:rgba(14,165,233,.34); border-color:rgba(125,211,252,.9); box-shadow:0 14px 30px rgba(14,165,233,.22); transform:translateY(-2px); text-decoration:none; }
+    .button:active { transform:translateY(0); box-shadow:0 7px 16px rgba(14,165,233,.16); }
+    .button-danger { border-color:rgba(248,113,113,.55); color:#fee2e2; background:rgba(239,68,68,.16); }
+    .button-danger:hover { background:rgba(239,68,68,.32); border-color:#fca5a5; box-shadow:0 14px 30px rgba(239,68,68,.2); }
+    .inline-form { display:inline; margin:0; }
+    .icon-button { min-width:2.4rem; padding:.48rem .6rem; line-height:1; }
+    table { width:100%; border-collapse: collapse; overflow:hidden; border-radius:1rem; background:rgba(17,28,52,.82); }
+    .table-scroll { width:100%; overflow-x:auto; border-radius:1rem; }
+    th, td { padding:.8rem; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } th { color:#bae6fd; font-size:.82rem; text-transform:uppercase; letter-spacing:.06em; }
+    code { display:inline-block; max-width:100%; overflow:auto; padding:.35rem .5rem; border-radius:.5rem; background:#07111f; color:#d9f99d; white-space:nowrap; }
+    .copy-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.6rem; align-items:start; margin-top:.35rem; }
+    .postback-code { width:100%; white-space:normal; overflow-wrap:anywhere; word-break:break-word; line-height:1.45; }
+    .copy-button { white-space:nowrap; }
+    .links li { margin-bottom:.9rem; }
+    .form-grid { display:grid; gap:1rem; max-width:46rem; }
+    .field label { display:block; color:#bae6fd; font-weight:700; margin-bottom:.4rem; }
+    input[type=text], input[type=number], select, textarea { width:100%; border:1px solid var(--line); border-radius:.8rem; padding:.8rem 1rem; background:#07111f; color:var(--text); }
+    input[type=checkbox] { transform:scale(1.2); margin-right:.5rem; }
+    .errorlist { color:#fecaca; background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.35); border-radius:.8rem; padding:.7rem 1rem; }
+    .chart { display:flex; align-items:end; gap:.8rem; height:15rem; padding-top:1rem; border-bottom:1px solid var(--line); }
+    .bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:end; height:100%; gap:.45rem; }
+    .bar { width:100%; min-height:.35rem; border-radius:.7rem .7rem 0 0; background:linear-gradient(180deg, var(--accent), #2563eb); }
+    .bar.approved { background:linear-gradient(180deg, var(--green), #15803d); } .bar.processing { background:linear-gradient(180deg, var(--orange), #b45309); } .bar.rejected { background:linear-gradient(180deg, var(--red), #991b1b); }
+    .label { font-size:.8rem; color:var(--muted); text-align:center; min-height:2.1rem; }
+    @media (max-width: 1100px) { .grid { grid-template-columns:repeat(2, minmax(0,1fr)); } .content { padding:1.4rem; } }
+    @media (max-width: 760px) { .shell { grid-template-columns:1fr; } .sidebar { position:sticky; top:0; z-index:5; padding:1rem; border-right:0; border-bottom:1px solid var(--line); } .brand { margin-bottom:.8rem; } .nav { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:.5rem; } .nav a, .nav-logout { margin:0; text-align:center; } .nav a:hover, .nav-logout:hover { transform:translateY(-2px); } .content { padding:1rem; max-width:100vw; overflow:hidden; } .hero { display:block; } .grid { grid-template-columns:1fr; } .chart { height:11rem; gap:.45rem; } th, td { padding:.65rem; } code { white-space:normal; word-break:break-all; } .copy-row { grid-template-columns:1fr; } .copy-button { width:100%; } }
+    @media (max-width: 460px) { h1 { font-size:1.55rem; } .metric { font-size:1.65rem; } .nav { grid-template-columns:1fr; } .toolbar { flex-direction:column; } .button { width:100%; text-align:center; } .chart { height:9rem; } }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">Saleads Postbacks</div>
+    <nav class="nav">
+      <a href="{% url 'postbacks:dashboard' %}">Статистика</a>
+      <a href="{% url 'postbacks:campaign_list' %}">Кампании</a>
+      <a href="{% url 'postbacks:event_list' %}">События</a>
+      <form method="post" action="{% url 'admin:logout' %}">{% csrf_token %}<button class="nav-logout" type="submit">Выход</button></form>
+    </nav>
+  </aside>
+  <main class="content">{% block content %}{% endblock %}</main>
+</div>
+<script>
+  document.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-copy]');
+    if (!button) return;
+    const text = button.getAttribute('data-copy');
+    const original = button.textContent;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+      button.textContent = 'Скопировано';
+      setTimeout(() => { button.textContent = original; }, 1400);
+    } catch (error) {
+      button.textContent = 'Не удалось скопировать';
+      setTimeout(() => { button.textContent = original; }, 1800);
+    }
+  });
+  document.addEventListener('submit', (event) => {
+    const form = event.target.closest('[data-confirm]');
+    if (form && !window.confirm(form.dataset.confirm)) event.preventDefault();
+  });
+</script>
+</body>
+</html>

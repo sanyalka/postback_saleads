@@ -5,8 +5,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db import models
 from django.db.models import Count, Sum
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET
+from .forms import CampaignForm
 from .models import Campaign, PostbackEvent
 
 STATUS_LABELS = dict(PostbackEvent.STATUS_CHOICES)
@@ -94,6 +95,42 @@ def dashboard(request):
         'summary': _summary(events),
         'chart_rows': _chart_rows(events),
     })
+
+
+@staff_member_required
+def campaign_list(request):
+    campaigns = Campaign.objects.annotate(
+        total=Count('events'),
+        approved=Count('events', filter=models.Q(events__status=PostbackEvent.STATUS_APPROVED)),
+        rejected=Count('events', filter=models.Q(events__status=PostbackEvent.STATUS_REJECTED)),
+        profit_total=Sum('events__profit'),
+    )
+    return render(request, 'admin/postbacks/campaign_list.html', {'campaigns': campaigns})
+
+
+@staff_member_required
+def campaign_create(request):
+    form = CampaignForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        campaign = form.save()
+        return redirect('postbacks:campaign_detail', slug=campaign.slug)
+    return render(request, 'admin/postbacks/campaign_form.html', {'form': form, 'title': 'Создать кампанию'})
+
+
+@staff_member_required
+def campaign_edit(request, slug):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    form = CampaignForm(request.POST or None, instance=campaign)
+    if request.method == 'POST' and form.is_valid():
+        campaign = form.save()
+        return redirect('postbacks:campaign_detail', slug=campaign.slug)
+    return render(request, 'admin/postbacks/campaign_form.html', {'form': form, 'campaign': campaign, 'title': 'Редактировать кампанию'})
+
+
+@staff_member_required
+def event_list(request):
+    events = PostbackEvent.objects.select_related('campaign').all()[:500]
+    return render(request, 'admin/postbacks/event_list.html', {'events': events, 'summary': _summary(PostbackEvent.objects.all()), 'chart_rows': _chart_rows(PostbackEvent.objects.all())})
 
 
 @staff_member_required

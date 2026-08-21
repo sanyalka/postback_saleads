@@ -3,7 +3,7 @@
 {% block content %}
 <div class="hero">
   <div><div class="muted">Обзор</div><h1>Статистика постбеков</h1><p class="muted">Все кампании, статусы конверсий и сумма вознаграждений.</p></div>
-  <div class="toolbar"><a class="button" href="/admin/postbacks/campaign/add/">+ Создать кампанию</a></div>
+  <div class="toolbar"><a class="button" href="{% url 'postbacks:campaign_create' %}">+ Создать кампанию</a></div>
 </div>
 <div class="grid">
   <section class="card"><div class="muted">Всего событий</div><div class="metric">{{ summary.total|default:"0" }}</div></section>

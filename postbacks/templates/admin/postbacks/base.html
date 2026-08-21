@@ -27,6 +27,11 @@
     th, td { padding:.8rem; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } th { color:#bae6fd; font-size:.82rem; text-transform:uppercase; letter-spacing:.06em; }
     code { display:inline-block; max-width:100%; overflow:auto; padding:.35rem .5rem; border-radius:.5rem; background:#07111f; color:#d9f99d; white-space:nowrap; }
     .links li { margin-bottom:.9rem; }
+    .form-grid { display:grid; gap:1rem; max-width:46rem; }
+    .field label { display:block; color:#bae6fd; font-weight:700; margin-bottom:.4rem; }
+    input[type=text], input[type=number], select, textarea { width:100%; border:1px solid var(--line); border-radius:.8rem; padding:.8rem 1rem; background:#07111f; color:var(--text); }
+    input[type=checkbox] { transform:scale(1.2); margin-right:.5rem; }
+    .errorlist { color:#fecaca; background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.35); border-radius:.8rem; padding:.7rem 1rem; }
     .chart { display:flex; align-items:end; gap:.8rem; height:15rem; padding-top:1rem; border-bottom:1px solid var(--line); }
     .bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:end; height:100%; gap:.45rem; }
     .bar { width:100%; min-height:.35rem; border-radius:.7rem .7rem 0 0; background:linear-gradient(180deg, var(--accent), #2563eb); }
@@ -41,8 +46,8 @@
     <div class="brand">Saleads Postbacks</div>
     <nav class="nav">
       <a href="{% url 'postbacks:dashboard' %}">Статистика</a>
-      <a href="/admin/postbacks/campaign/">Кампании</a>
-      <a href="/admin/postbacks/postbackevent/">События</a>
+      <a href="{% url 'postbacks:campaign_list' %}">Кампании</a>
+      <a href="{% url 'postbacks:event_list' %}">События</a>
       <a href="/admin/logout/">Выход</a>
     </nav>
   </aside>

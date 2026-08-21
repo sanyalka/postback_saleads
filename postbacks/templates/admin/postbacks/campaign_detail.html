@@ -3,7 +3,7 @@
 {% block content %}
 <div class="hero">
   <div><div class="muted">Кампания</div><h1>{{ campaign.name }}</h1><p class="muted">Ссылки для подключения Saleads и последние события только этой кампании.</p></div>
-  <div class="toolbar"><a class="button" href="{% url 'postbacks:export' campaign.slug 'json' %}">JSON</a><a class="button" href="{% url 'postbacks:export' campaign.slug 'csv' %}">CSV</a></div>
+  <div class="toolbar"><a class="button" href="{% url 'postbacks:campaign_edit' campaign.slug %}">Редактировать</a><a class="button" href="{% url 'postbacks:export' campaign.slug 'json' %}">JSON</a><a class="button" href="{% url 'postbacks:export' campaign.slug 'csv' %}">CSV</a></div>
 </div>
 <div class="grid">
   <section class="card"><div class="muted">Всего</div><div class="metric">{{ summary.total|default:"0" }}</div></section>

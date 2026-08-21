@@ -1,0 +1,15 @@
+{% extends "admin/postbacks/base.html" %}
+{% block title %}{{ title }} — Saleads{% endblock %}
+{% block content %}
+<div class="hero"><div><div class="muted">Кампания</div><h1>{{ title }}</h1><p class="muted">После сохранения система покажет готовые Saleads-ссылки.</p></div></div>
+<section class="card">
+  <form method="post" class="form-grid">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <div class="field">{{ field.errors }}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="muted">{{ field.help_text }}</div>{% endif %}</div>
+    {% endfor %}
+    <div class="toolbar"><button class="button" type="submit">Сохранить</button><a class="button" href="{% url 'postbacks:campaign_list' %}">Отмена</a></div>
+  </form>
+</section>
+{% endblock %}

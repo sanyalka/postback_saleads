@@ -1,0 +1,31 @@
+{% extends "admin/postbacks/base.html" %}
+{% block title %}Статистика Saleads{% endblock %}
+{% block content %}
+<div class="hero">
+  <div><div class="muted">Обзор</div><h1>Статистика постбеков</h1><p class="muted">Все кампании, статусы конверсий и сумма вознаграждений.</p></div>
+  <div class="toolbar"><a class="button" href="/admin/postbacks/campaign/add/">+ Создать кампанию</a></div>
+</div>
+<div class="grid">
+  <section class="card"><div class="muted">Всего событий</div><div class="metric">{{ summary.total|default:"0" }}</div></section>
+  <section class="card"><div class="muted">Подтверждено</div><div class="metric">{{ summary.approved|default:"0" }}</div></section>
+  <section class="card"><div class="muted">Отклонено</div><div class="metric">{{ summary.rejected|default:"0" }}</div></section>
+  <section class="card"><div class="muted">Вознаграждение</div><div class="metric">{{ summary.profit|default:"0" }}</div></section>
+</div>
+<section class="card">
+  <h2>График по статусам</h2>
+  <div class="chart">
+    {% for row in chart_rows %}
+      <div class="bar-wrap"><div class="bar {{ row.status }}" style="height: {{ row.height }}%"></div><strong>{{ row.count }}</strong><div class="label">{{ row.label }}</div></div>
+    {% endfor %}
+  </div>
+</section>
+<section class="card" style="margin-top:1rem">
+  <h2>Кампании</h2>
+  <table>
+    <tr><th>Кампания</th><th>Всего</th><th>Подтверждено</th><th>Отклонено</th><th>Вознаграждение</th></tr>
+    {% for campaign in campaigns %}
+      <tr><td><a href="{% url 'postbacks:campaign_detail' campaign.slug %}">{{ campaign.name }}</a></td><td>{{ campaign.total }}</td><td>{{ campaign.approved }}</td><td>{{ campaign.rejected }}</td><td>{{ campaign.profit_total|default:"0" }}</td></tr>
+    {% empty %}<tr><td colspan="5">Кампаний пока нет.</td></tr>{% endfor %}
+  </table>
+</section>
+{% endblock %}

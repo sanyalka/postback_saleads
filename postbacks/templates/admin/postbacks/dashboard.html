@@ -21,11 +21,11 @@
 </section>
 <section class="card" style="margin-top:1rem">
   <h2>Кампании</h2>
-  <table>
+  <div class="table-scroll"><table>
     <tr><th>Кампания</th><th>Всего</th><th>Подтверждено</th><th>Отклонено</th><th>Вознаграждение</th></tr>
     {% for campaign in campaigns %}
       <tr><td><a href="{% url 'postbacks:campaign_detail' campaign.slug %}">{{ campaign.name }}</a></td><td>{{ campaign.total }}</td><td>{{ campaign.approved }}</td><td>{{ campaign.rejected }}</td><td>{{ campaign.profit_total|default:"0" }}</td></tr>
     {% empty %}<tr><td colspan="5">Кампаний пока нет.</td></tr>{% endfor %}
-  </table>
+  </table></div>
 </section>
 {% endblock %}

@@ -2,15 +2,15 @@
 {% block title %}Кампании — Saleads{% endblock %}
 {% block content %}
 <div class="hero">
-  <div><div class="muted">Управление</div><h1>Кампании</h1><p class="muted">Создавайте кампании и открывайте отдельные ссылки/статистику без старого интерфейса Django admin.</p></div>
+  <div><div class="muted">Управление</div><h1>Кампании</h1><p class="muted">Создавайте кампании и открывайте отдельные ссылки/статистику.</p></div>
   <div class="toolbar"><a class="button" href="{% url 'postbacks:campaign_create' %}">+ Новая кампания</a></div>
 </div>
 <section class="card">
-  <table>
+  <div class="table-scroll"><table>
     <tr><th>Кампания</th><th>Slug</th><th>Активна</th><th>Всего</th><th>Подтверждено</th><th>Отклонено</th><th>Действия</th></tr>
     {% for campaign in campaigns %}
       <tr><td><a href="{% url 'postbacks:campaign_detail' campaign.slug %}">{{ campaign.name }}</a></td><td><code>{{ campaign.slug }}</code></td><td>{{ campaign.is_active|yesno:"да,нет" }}</td><td>{{ campaign.total }}</td><td>{{ campaign.approved }}</td><td>{{ campaign.rejected }}</td><td><a href="{% url 'postbacks:campaign_edit' campaign.slug %}">Редактировать</a></td></tr>
     {% empty %}<tr><td colspan="7">Кампаний пока нет.</td></tr>{% endfor %}
-  </table>
+  </table></div>
 </section>
 {% endblock %}

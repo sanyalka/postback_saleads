@@ -12,8 +12,8 @@
     .shell { display:grid; grid-template-columns: 17rem 1fr; min-height:100vh; }
     .sidebar { padding:2rem 1.25rem; background: rgba(15,23,42,.88); border-right:1px solid var(--line); backdrop-filter: blur(16px); }
     .brand { font-size:1.25rem; font-weight:800; letter-spacing:.02em; margin-bottom:2rem; }
-    .nav a { display:block; padding:.8rem 1rem; border-radius:.9rem; color:var(--text); margin-bottom:.45rem; background:rgba(255,255,255,.03); }
-    .nav a:hover { background:rgba(56,189,248,.14); text-decoration:none; }
+    .nav a { display:block; padding:.8rem 1rem; border-radius:.9rem; color:var(--text); margin-bottom:.45rem; background:rgba(255,255,255,.03); transition: transform .18s ease, background .18s ease, box-shadow .18s ease; }
+    .nav a:hover { background:rgba(56,189,248,.14); box-shadow:0 10px 25px rgba(56,189,248,.12); transform:translateX(.25rem); text-decoration:none; }
     .content { padding:2rem; }
     .hero { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; margin-bottom:1.5rem; }
     h1 { margin:.1rem 0 .35rem; font-size:2rem; } h2 { margin:0 0 1rem; }
@@ -22,8 +22,11 @@
     .card { background:linear-gradient(180deg, rgba(23,35,61,.96), rgba(17,28,52,.96)); border:1px solid var(--line); border-radius:1.1rem; padding:1.1rem; box-shadow: 0 20px 45px rgba(0,0,0,.18); }
     .metric { font-size:2rem; font-weight:800; margin-top:.35rem; }
     .toolbar { display:flex; gap:.7rem; flex-wrap:wrap; }
-    .button { border:1px solid rgba(56,189,248,.5); color:#e0f2fe; background:rgba(14,165,233,.18); padding:.7rem 1rem; border-radius:.8rem; display:inline-block; }
+    .button { border:1px solid rgba(56,189,248,.5); color:#e0f2fe; background:rgba(14,165,233,.18); padding:.7rem 1rem; border-radius:.8rem; display:inline-block; cursor:pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease; }
+    .button:hover { background:rgba(14,165,233,.34); border-color:rgba(125,211,252,.9); box-shadow:0 14px 30px rgba(14,165,233,.22); transform:translateY(-2px); text-decoration:none; }
+    .button:active { transform:translateY(0); box-shadow:0 7px 16px rgba(14,165,233,.16); }
     table { width:100%; border-collapse: collapse; overflow:hidden; border-radius:1rem; background:rgba(17,28,52,.82); }
+    .table-scroll { width:100%; overflow-x:auto; border-radius:1rem; }
     th, td { padding:.8rem; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } th { color:#bae6fd; font-size:.82rem; text-transform:uppercase; letter-spacing:.06em; }
     code { display:inline-block; max-width:100%; overflow:auto; padding:.35rem .5rem; border-radius:.5rem; background:#07111f; color:#d9f99d; white-space:nowrap; }
     .links li { margin-bottom:.9rem; }
@@ -37,7 +40,9 @@
     .bar { width:100%; min-height:.35rem; border-radius:.7rem .7rem 0 0; background:linear-gradient(180deg, var(--accent), #2563eb); }
     .bar.approved { background:linear-gradient(180deg, var(--green), #15803d); } .bar.processing { background:linear-gradient(180deg, var(--orange), #b45309); } .bar.rejected { background:linear-gradient(180deg, var(--red), #991b1b); }
     .label { font-size:.8rem; color:var(--muted); text-align:center; min-height:2.1rem; }
-    @media (max-width: 900px) { .shell { grid-template-columns:1fr; } .sidebar { position:static; } .grid { grid-template-columns:1fr 1fr; } .hero { display:block; } }
+    @media (max-width: 1100px) { .grid { grid-template-columns:repeat(2, minmax(0,1fr)); } .content { padding:1.4rem; } }
+    @media (max-width: 760px) { .shell { grid-template-columns:1fr; } .sidebar { position:sticky; top:0; z-index:5; padding:1rem; border-right:0; border-bottom:1px solid var(--line); } .brand { margin-bottom:.8rem; } .nav { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:.5rem; } .nav a { margin:0; text-align:center; } .nav a:hover { transform:translateY(-2px); } .content { padding:1rem; } .hero { display:block; } .grid { grid-template-columns:1fr; } .chart { height:11rem; gap:.45rem; } th, td { padding:.65rem; } code { white-space:normal; word-break:break-all; } }
+    @media (max-width: 460px) { h1 { font-size:1.55rem; } .metric { font-size:1.65rem; } .nav { grid-template-columns:1fr; } .toolbar { flex-direction:column; } .button { width:100%; text-align:center; } .chart { height:9rem; } }
   </style>
 </head>
 <body>

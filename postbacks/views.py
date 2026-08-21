@@ -9,7 +9,9 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
 from .models import Campaign, PostbackEvent
 
-STATUSES = {key for key, _ in PostbackEvent.STATUS_CHOICES}
+STATUS_LABELS = dict(PostbackEvent.STATUS_CHOICES)
+STATUS_ORDER = [key for key, _ in PostbackEvent.STATUS_CHOICES]
+STATUSES = set(STATUS_ORDER)
 EXPORT_FIELDS = ['created_at', 'campaign', 'status', 'click_id', 'conversion_id', 'offer_id', 'goal_id', 'profit', 'order_sum', 'custom', 'ip_address', 'user_agent', 'raw_payload']
 
 
@@ -27,6 +29,30 @@ def _client_ip(request):
     if forwarded:
         return forwarded.split(',')[0].strip()
     return request.META.get('REMOTE_ADDR')
+
+
+def _summary(queryset):
+    counts = {status: 0 for status in STATUS_ORDER}
+    for row in queryset.values('status').annotate(count=Count('id')):
+        counts[row['status']] = row['count']
+    return {
+        'total': sum(counts.values()),
+        'processing': counts[PostbackEvent.STATUS_PROCESSING],
+        'approved': counts[PostbackEvent.STATUS_APPROVED],
+        'rejected': counts[PostbackEvent.STATUS_REJECTED],
+        'profit': queryset.aggregate(total=Sum('profit'))['total'] or 0,
+    }
+
+
+def _chart_rows(queryset):
+    counts = {status: 0 for status in STATUS_ORDER}
+    for row in queryset.values('status').annotate(count=Count('id')):
+        counts[row['status']] = row['count']
+    max_count = max(counts.values()) or 1
+    return [
+        {'status': status, 'label': STATUS_LABELS[status], 'count': counts[status], 'height': max(8, round(counts[status] / max_count * 100)) if counts[status] else 8}
+        for status in STATUS_ORDER
+    ]
 
 
 @require_GET
@@ -59,18 +85,29 @@ def dashboard(request):
     campaigns = Campaign.objects.annotate(
         total=Count('events'),
         approved=Count('events', filter=models.Q(events__status=PostbackEvent.STATUS_APPROVED)),
+        rejected=Count('events', filter=models.Q(events__status=PostbackEvent.STATUS_REJECTED)),
         profit_total=Sum('events__profit'),
     )
-    totals = PostbackEvent.objects.values('status').annotate(count=Count('id'), profit=Sum('profit')).order_by('status')
-    return render(request, 'admin/postbacks/dashboard.html', {'campaigns': campaigns, 'totals': totals})
+    events = PostbackEvent.objects.all()
+    return render(request, 'admin/postbacks/dashboard.html', {
+        'campaigns': campaigns,
+        'summary': _summary(events),
+        'chart_rows': _chart_rows(events),
+    })
 
 
 @staff_member_required
 def campaign_detail(request, slug):
     campaign = get_object_or_404(Campaign, slug=slug)
-    events = campaign.events.all()[:200]
-    links = {status: campaign.postback_url(request, status) for status in STATUSES}
-    return render(request, 'admin/postbacks/campaign_detail.html', {'campaign': campaign, 'events': events, 'links': links})
+    events = campaign.events.all()
+    links = [{'status': status, 'label': STATUS_LABELS[status], 'url': campaign.postback_url(request, status)} for status in STATUS_ORDER]
+    return render(request, 'admin/postbacks/campaign_detail.html', {
+        'campaign': campaign,
+        'events': events[:200],
+        'links': links,
+        'summary': _summary(events),
+        'chart_rows': _chart_rows(events),
+    })
 
 
 def _event_row(event):

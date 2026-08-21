@@ -21,7 +21,9 @@ class Campaign(models.Model):
     def postback_url(self, request=None, status='click'):
         path = reverse('postbacks:receive', kwargs={'slug': self.slug, 'status': status})
         url = f'{path}?token={self.token}&clickId={{clickId}}&conversionId={{conversionId}}&offerId={{offerId}}&goalId={{goalId}}&profit={{profit}}&sum={{sum}}&custom={{custom}}'
-        return request.build_absolute_uri(url) if request else url
+        if not request:
+            return url
+        return f'{request.scheme}://{request.get_host()}{url}'
 
 
 class PostbackEvent(models.Model):

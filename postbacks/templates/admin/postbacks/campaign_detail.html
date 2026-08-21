@@ -20,7 +20,7 @@
 <section class="card" style="margin-top:1rem">
   <h2>Ссылки для Saleads</h2>
   <ul class="links">
-    {% for item in links %}<li><strong>{{ item.label }}</strong><br><code>{{ item.url }}</code></li>{% endfor %}
+    {% for item in links %}<li><strong>{{ item.label }}</strong><div class="copy-row"><code class="postback-code">{{ item.url }}</code><button type="button" class="button copy-button" data-copy="{{ item.url }}">Копировать</button></div></li>{% endfor %}
   </ul>
   <p class="muted">Токены: <code>{clickId}</code>, <code>{conversionId}</code>, <code>{offerId}</code>, <code>{goalId}</code>, <code>{profit}</code>, <code>{sum}</code>, <code>{custom}</code>.</p>
 </section>

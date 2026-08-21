@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block title %}Saleads Postbacks{% endblock %}
+{% block branding %}<div id="site-name"><a href="{% url 'admin:index' %}">Saleads Postbacks</a></div>{% endblock %}
+{% block extrastyle %}{{ block.super }}
+<style>
+:root { --primary:#0f172a; --secondary:#172554; --accent:#38bdf8; --primary-fg:#e5edf9; --body-bg:#0f172a; --body-fg:#e5edf9; --body-quiet-color:#94a3b8; --hairline-color:#263755; --border-color:#263755; --link-fg:#38bdf8; --link-hover-color:#7dd3fc; --header-bg:#111c34; --header-color:#e5edf9; --breadcrumbs-bg:#17233d; --breadcrumbs-fg:#bae6fd; --button-bg:#0284c7; --button-hover-bg:#0369a1; --default-button-bg:#22c55e; --default-button-hover-bg:#16a34a; }
+body { background: radial-gradient(circle at top left, #1e3a8a 0, transparent 34rem), #0f172a; }
+#header { box-shadow: 0 16px 40px rgba(0,0,0,.25); }
+.module, .inline-group, div.breadcrumbs, #content-related { border-radius: 1rem; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,.18); }
+.dashboard .module table th, .dashboard .module table td { padding: .8rem; }
+.button, input[type=submit], input[type=button], .submit-row input, a.button { border-radius: .7rem; }
+</style>
+{% endblock %}
+{% block nav-global %}<a href="{% url 'postbacks:dashboard' %}" style="color:#bae6fd;font-weight:700;margin-left:1rem">Панель статистики</a>{% endblock %}
